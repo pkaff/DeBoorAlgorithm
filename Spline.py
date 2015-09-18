@@ -7,7 +7,7 @@ class Spline(object):
         self.gp = gridpoints
         self.coeff = coeff
 
-    def __call__(self, u):
+    def evalu(self, u):
         #Find the hot interval
         a = array([self.gp])
         i = (a > u).argmax()
@@ -44,7 +44,7 @@ class Spline(object):
             #Get current alpha
             a = self.alpha(i, u)
             #Call recursion according to alpha*d[...] + (1 - alpha)*d[...]
-            return a * blossoms(i - 1, depth - 1) + (1 - a) * blossoms(i, depth - 1)
+            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in blossoms(i - 1, depth - 1)), tuple((1 - a) * x for x in blossoms(i, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
 
     def get_N(self, i, k):
         gp = self.gp
@@ -73,9 +73,9 @@ class Spline(object):
         # Generating a list of all evaluation point
         gph = [lambda i: i for i in f_range(gp[0],gp[len(gp)],h)]
         #Plotting evaluated list
-        plt.plot(self(gph))
-        if dbp == true:
+        #plt.plot(self.evalu(gph))
+        plt.show()
+        if dbp == 1:
             plt.Polygon(coeff)
             plt.plot(coeff)
-            
         
