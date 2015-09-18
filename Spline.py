@@ -7,13 +7,13 @@ class Spline(object):
         self.gp = gridpoints
         self.coeff = coeff
 
-    def evalu(self, u):
+    def __call__(self, u):
         #Find the hot interval
         a = array([self.gp])
         i = (a > u).argmax()
         
         #Call recursive blossom algorithm
-        return blossoms(i, u, 3)
+        return self.blossoms(i, u, 3)
 
     @classmethod
     def by_points(cls, x, y, gridpoints):
@@ -31,9 +31,9 @@ class Spline(object):
         dx = solve_banded((3, 0), m, x) #m is lower triangular with bandwidth 4 (main diagonal + 3 lower diagonals)
         dy = solve_banded((3, 0), m, y)
         
-        return cls(gridpoints, zip(dx, dy))
+        return cls(gridpoints, list(zip(dx, dy)))
 
-    @classmethod
+    #@classmethod
     #def get_spline_basis_function(cls, gridpoints
 
     def blossoms(self, i, u, depth):
@@ -42,9 +42,9 @@ class Spline(object):
             return self.coeff[i]
         else:
             #Get current alpha
-            a = alpha(i, u)
+            a = self.alpha(i, u)
             #Call recursion according to alpha*d[...] + (1 - alpha)*d[...]
-            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in blossoms(i - 1, depth - 1)), tuple((1 - a) * x for x in blossoms(i, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
+            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in self.blossoms(i - 1, u, depth - 1)), tuple((1 - a) * x for x in self.blossoms(i, u, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
 
     def get_N(self, i, k):
         gp = self.gp
