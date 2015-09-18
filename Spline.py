@@ -10,6 +10,7 @@ class Spline(object):
     def __call__(self, u):
         #Find the hot interval
         a = array([self.gp])
+        
         i = (a > u).argmax()
         
         #Call recursive blossom algorithm
@@ -39,6 +40,8 @@ class Spline(object):
     def blossoms(self, i, u, depth):
         if (depth == 0):
             #Base case
+            if i < 2:
+                print(i)
             return self.coeff[i]
         else:
             #Get current alpha
@@ -59,24 +62,28 @@ class Spline(object):
     def alpha(self, i, u):
         gp = self.gp
         #Return alpha according to formula
-        return (gp[i+1] - u)/(gp[i+1]-gp[i-2])
+        if gp[i+1]-gp[max(i-2,0)] == 0:
+            return 0
+        else:
+            return (gp[i+1] - u)/(gp[i+1]-gp[max(i-2,0)])
 
-    def f_range(start, stop, step):
+    def f_range(self,start, stop, step):
         # implementing range() for float type numbers
         i = start
         while i < stop:
             yield i
             i += step
 
-    def plot(self, h, dbp = 0): #h is step size, dbp check if you want de Boor points and Control Polygon
+    def plot(self, h=0.1, dbp = 1): #h is step size, dbp check if you want de Boor points and Control Polygon
         gp = self.gp
         # Generating a list of all evaluation point
-        gph = [lambda i: i for i in f_range(gp[0],gp[len(gp)],h)]
-
-        #Plotting evaluated list
-        #plt.plot(self.evalu(gph))
-        plt.show()
+        gph = list(self.f_range(gp[0],gp[-1],h))
+        evalugph=list(zip(*[self(u) for u in gph]))
+       
         if dbp == 1:
-            plt.Polygon(coeff)
-            plt.plot(coeff)
+            zipcoeff=list(zip(*self.coeff))
+            plt.plot(list(zipcoeff[0]),list(zipcoeff[1]))
+        plt.plot(list(evalugph[0]),list(evalugph[1]))
+        plt.show()  
+       
         
