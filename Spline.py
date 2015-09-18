@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 class Spline(object):
     def __init__(self, gridpoints, coeff):
         self.gp = gridpoints
@@ -39,3 +41,21 @@ class Spline(object):
     def alpha(self, i, u):
         #Return alpha according to formula
         return (gp[i+1] - u)/(gp[i+1]-gp[i-2])
+
+    def frange(start, stop, step):
+        # implementing range() for float type numbers
+        i = start
+        while i < stop:
+        yield i
+        i += step
+
+    def plot(self,h,dbp = 0): #h is step size, dbp check if you want de Boor points and Control Polygon
+        # Generating a list of all evaluation point
+        gph = [lambda i: i for i in frange(self.gp[0],self.gp[len(self.gp)],h]
+        #Plotting evaluated list
+        plt.plot(self(gph))
+        if dbp == true:
+            plt.Polygon(coeff)
+            plt.plot(coeff)
+            
+        
