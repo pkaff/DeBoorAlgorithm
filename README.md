@@ -11,3 +11,5 @@ git pull (fetches any changes from your current branch)
 # How to cache login information
 git config --global credential.helper cache (standard timeout time 15 min)
 git config --global credential.helper 'cache --timeout=3600' (timeout 3600s)
+
+#Asf
