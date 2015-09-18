@@ -3,31 +3,29 @@ from scipy import *
 from Spline import *
 #tests
 class TestSpline(unittest.TestCase):
-    #creates a spline with points 0..9 and d values conforming to 5 - x for testing
+    #creates a spline with points 0..9 and corresponding d values randomly distributed in [0,20) 
     def __init__(self):
         gp = array(range(20))
         coeff = [0.0]*10
         for i in range(10):
-            coeff[i] = (i, 5 - i)
+            coeff[i] = (i, random.random()*20)
         self.spline = Spline(gp, coeff)
         
     #-assert that s(u) = sum(d(u(i)N(i,3))
     def test_equality(self):
-        u = 5.0
-        s_u = array(self.spline(u))
-        dN = array((u, 0.0))
-        for i in range(2, len(self.spline.coeff) - 3):
+        u = 4.7
+        s_u = self.spline(u)[1]
+        dN = 0.0
+        hi = int(floor(u))
+        for i in range(hi - 2, hi + 1):
             coeff = self.spline.coeff[i][1]
             N_u = self.spline.get_N(i,3)(u)
-            dN[1] += coeff*N_u
+            dN += coeff*N_u
         
-        print(dN)
-        print(s_u)
-        result = (0, 0)
-        expected = (0, 0)
+        result = s_u - dN
+        expected = 0.0
         self.assertAlmostEqual(result, expected)
-            
-    #-assert that the extremities of the spline and the extremities of the graph overlap
+        
 
     if __name__ == '__main__':
         unittest.main()
