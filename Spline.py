@@ -13,7 +13,7 @@ class Spline(object):
         i = (a > u).argmax()
         
         #Call recursive blossom algorithm
-        return blossoms(i, u, 3)
+        return self.blossoms(i, u, 3)
 
     @classmethod
     def by_points(cls, x, y, gridpoints):
@@ -33,7 +33,7 @@ class Spline(object):
         
         return cls(gridpoints, zip(dx, dy))
 
-    @classmethod
+   # @classmethod
     #def get_spline_basis_function(cls, gridpoints
 
     def blossoms(self, i, u, depth):
@@ -42,7 +42,7 @@ class Spline(object):
             return self.coeff[i]
         else:
             #Get current alpha
-            a = alpha(i, u)
+            a = self.alpha(i, u)
             #Call recursion according to alpha*d[...] + (1 - alpha)*d[...]
             return a * blossoms(i - 1, depth - 1) + (1 - a) * blossoms(i, depth - 1)
 
@@ -65,13 +65,13 @@ class Spline(object):
         # implementing range() for float type numbers
         i = start
         while i < stop:
-        yield i
-        i += step
+            yield i
+            i += step
 
     def plot(self, h, dbp = 0): #h is step size, dbp check if you want de Boor points and Control Polygon
         gp = self.gp
         # Generating a list of all evaluation point
-        gph = [lambda i: i for i in f_range(gp[0],gp[len(gp)],h]
+        gph = [lambda i: i for i in f_range(gp[0],gp[len(gp)],h)]
         #Plotting evaluated list
         plt.plot(self(gph))
         if dbp == true:
