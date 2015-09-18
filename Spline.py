@@ -7,19 +7,19 @@ class Spline(object):
         self.gp = gridpoints
         self.coeff = coeff
 
-    def evalu(self, u):
+    def __call__(self, u):
         #Find the hot interval
-        a = array([self.gp])
+        a = array(self.gp)
         i = (a > u).argmax()
         
         #Call recursive blossom algorithm
         return self.blossoms(i, u, 3)
 
-    @classmethod
+    #@classmethod
     def by_points(cls, x, y, gridpoints):
         gp = self.gp
         assert(x.size == y.size) #x and y need to be same size
-        assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
+        assert(gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
         m = zeros((x.size, y.size)) #initialize matrix
         for i in range(x.size):
             N = get_N(i, 3)
@@ -33,8 +33,8 @@ class Spline(object):
         
         return cls(gridpoints, zip(dx, dy))
 
-   # @classmethod
-    #def get_spline_basis_function(cls, gridpoints
+    #@classmethod
+    #def get_spline_basis_function(cls, gridpoints)
 
     def blossoms(self, i, u, depth):
         if (depth == 0):
@@ -44,7 +44,7 @@ class Spline(object):
             #Get current alpha
             a = self.alpha(i, u)
             #Call recursion according to alpha*d[...] + (1 - alpha)*d[...]
-            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in blossoms(i - 1, depth - 1)), tuple((1 - a) * x for x in blossoms(i, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
+            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in self.blossoms(i - 1, u, depth - 1)), tuple((1 - a) * x for x in self.blossoms(i, u, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
 
     def get_N(self, i, k):
         gp = self.gp
@@ -53,8 +53,8 @@ class Spline(object):
             return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0) 
         else:
             #Recursion for N(i, k)(u) according to formula
-            return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * get_N(i, k - 1)(u) + 
-                    (gp[i+k] - u)/(gp[i+k] - gp[i]) * get_N(i + 1, k - 1)(u))
+            return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * self.get_N(i, k - 1)(u) + 
+                    (gp[i+k] - u)/(gp[i+k] - gp[i]) * self.get_N(i + 1, k - 1)(u))
 
     def alpha(self, i, u):
         gp = self.gp
