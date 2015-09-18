@@ -35,6 +35,7 @@ class Spline(object):
         return cls(gridpoints, zip(dx, dy))
 
     #@classmethod
+
     #def get_spline_basis_function(cls, gridpoints
 
     def blossoms(self, i, u, depth):

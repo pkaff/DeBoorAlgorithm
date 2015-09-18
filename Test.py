@@ -8,7 +8,7 @@ class TestSpline(unittest.TestCase):
         gp = array([range(10)])
         coeff = [0]*10
         for i in range(10):
-            coeff[i] = 5 - (i**2)/3
+            coeff[i] = (i, 5 - (i**2)/3)
         self.spline = Spline(gp, coeff)
         
     #-assert that s(u) = sum(d(u(i)N(i,3))
