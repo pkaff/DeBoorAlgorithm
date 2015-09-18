@@ -9,14 +9,13 @@ class Spline(object):
 
     def __call__(self, u):
         #Find the hot interval
-        a = array([self.gp])
-        
+        a = array(self.gp)
         i = (a > u).argmax()
         
         #Call recursive blossom algorithm
         return self.blossoms(i, u, 3)
 
-    @classmethod
+    #@classmethod
     def by_points(cls, x, y, gridpoints):
         gp = gridpoints
         xLen = len(x)
@@ -38,7 +37,7 @@ class Spline(object):
         return cls(gridpoints, list(zip(dx, dy)))
 
     #@classmethod
-    #def get_spline_basis_function(cls, gridpoints
+    #def get_spline_basis_function(cls, gridpoints)
 
     def blossoms(self, i, u, depth):
         if (depth == 0):
