@@ -1,4 +1,0 @@
-from Test import *
-t = TestSpline()
-t.test_equality()
-quit()
