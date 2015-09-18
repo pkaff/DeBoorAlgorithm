@@ -44,7 +44,7 @@ class Spline(object):
             #Get current alpha
             a = alpha(i, u)
             #Call recursion according to alpha*d[...] + (1 - alpha)*d[...]
-            return a * blossoms(i - 1, depth - 1) + (1 - a) * blossoms(i, depth - 1)
+            return tuple(t1 + t2 for t1, t2 in zip(tuple(a * x for x in blossoms(i - 1, depth - 1)), tuple((1 - a) * x for x in blossoms(i, depth - 1)))) #Add and multiply don't work on tuples, thus creating new tuples is requried
 
     def get_N(self, i, k):
         gp = self.gp
