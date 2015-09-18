@@ -5,7 +5,7 @@ class Spline(object):
         self.gp = gridpoints
         self.coeff = coeff
 
-    def __call__(self, u):
+    def evalu(self, u):
         #Find the hot interval
         a = array([gp])
         i = (a > u).argmax()
@@ -60,16 +60,16 @@ class Spline(object):
         # implementing range() for float type numbers
         i = start
         while i < stop:
-        yield i
-        i += step
+            yield i
+            i += step
 
     def plot(self,h,dbp = 0): #h is step size, dbp check if you want de Boor points and Control Polygon
         # Generating a list of all evaluation point
-        gph = [lambda i: i for i in frange(self.gp[0],self.gp[len(self.gp)],h]
+        #gph = [lambda i: i for i in frange(self.gp[0],self.gp[len(self.gp)],h)]
         #Plotting evaluated list
-        plt.plot(self(gph))
-        if dbp == true:
+        #plt.plot(self.evalu(gph))
+        plt.show()
+        if dbp == 1:
             plt.Polygon(coeff)
             plt.plot(coeff)
-            
         
