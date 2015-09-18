@@ -1,11 +1,28 @@
+import unittest
 from scipy import *
-def N(i, k):
-    gp = array(range(10))
-    if (k == 0):
-        return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0) 
-    else:
-        return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * N(i, k - 1)(u) + 
-                (gp[i+k] - u)/(gp[i+k] - gp[i]) * N(i + 1, k - 1)(u))
+from Spline import *
+#tests
+class TestSpline(unittest.TestCase):
+    #creates a spline with points 0..9 and fcn 5 - x^2/3 for testing
+    def __init__(self):
+        gp = array([range(10)])
+        coeff = [0]*10
+        for i in range(10):
+            coeff[i] = 5 - (i**2)/3
+        self.spline = Spline(gp, coeff)
+        
+    #-assert that s(u) = sum(d(u(i)N(i,3))
+    def test_equality(self):
+        u = 4.6
+        s_u = self.spline(u)
+        dN = 0.0
+        for i in self.spline.gp:
+            dN += (self.spline.coeff[i])*(self.spline.get_N(i,3)(u))
+            result = s_u - dN
+            expected = 0
+            self.assertAlmostEqual(result, expected)
+            
+    #-assert that the extremities of the spline and the extremities of the graph overlap
 
-a = N(2, 1)
-print(a(2.5))
+    if __name__ == '__main__':
+        unittest.main()
