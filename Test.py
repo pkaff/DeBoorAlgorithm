@@ -8,10 +8,10 @@ class TestSpline(unittest.TestCase):
     def test_equalityX(self):
         #create the test spline
         grid = self.genX(20)
-        gp = list(grid)
-        coeff = [0.0]*len(gp)
+        gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
+        coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
-        for i in gp:
+        for i in range(10):
             coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
@@ -19,24 +19,25 @@ class TestSpline(unittest.TestCase):
         u = round(random.random()*10, 2)
         s_u = spline(u)
         dN = (0.0, 0.0)
-        hi = self.find(spline.gp,round(u, 1))
-        for i in range(hi - 2, hi + 1):
+        #hi = self.find(spline.gp, round(u, 1))
+        for i in range(len(coeff)):
             coeff = spline.coeff[i]
             N_u = Spline.get_N(i, 3, spline.gp)(u)
             dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
-        
+
+        #spline.plot()
         result = s_u[0]
         expected = dN[0]
-        self.assertAlmostEqual(result, expected, 0)
+        self.assertAlmostEqual(result, expected)
         
     #-same test, but for the "y" value
     def test_equalityY(self):
         #create the test spline
         grid = self.genX(20)
-        gp = list(grid)
-        coeff = [0.0]*len(gp)
+        gp = gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
+        coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
-        for i in gp:
+        for i in range(10):
             coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
@@ -44,16 +45,16 @@ class TestSpline(unittest.TestCase):
         u = round(random.random()*10, 2)
         s_u = spline(u)
         dN = (0.0, 0.0)
-        hi = self.find(spline.gp,round(u, 1))
-        for i in range(hi - 2, hi + 1):
+        #hi = self.find(spline.gp, round(u, 1))
+        for i in range(len(coeff)):
             coeff = spline.coeff[i]
             N_u = Spline.get_N(i, 3, spline.gp)(u)
             dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
         
+        #spline.plot()
         result = s_u[1]
         expected = dN[1]
-        
-        self.assertAlmostEqual(result, expected, 0)
+        self.assertAlmostEqual(result, expected)
         
     def test_polynom(self):
         x_values = [x for x in self.f_range(-10,10,0.1)]

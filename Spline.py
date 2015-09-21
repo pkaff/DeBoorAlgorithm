@@ -45,6 +45,10 @@ class Spline(object):
                     mbs[i, j] = 0
                 else:
                     mbs[i, j] = m[i - 2 + j, j]
+<<<<<<< HEAD
+=======
+
+>>>>>>> b6f46367fcbd47d240d17c947525cb6e497155da
         dx = solve_banded((2, 2), mbs, x) #m is banded with bandwidth <4
         dy = solve_banded((2, 2), mbs, y)
         
@@ -108,7 +112,7 @@ class Spline(object):
 
     def plot(self, h=0.1, dbp = 1): #h is step size, dbp check if you want de Boor points and Control Polygon
         gp = self.gp
-        # Generating a list of all evaluation point
+        # Generating a list of all evaluation points
         gph = list(self.f_range(gp[0],gp[-1],h))
         evalugph=list(zip(*[self(u) for u in gph]))
        
