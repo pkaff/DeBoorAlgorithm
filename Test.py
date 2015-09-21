@@ -65,6 +65,7 @@ class TestSpline(unittest.TestCase):
         s = Spline.by_points(x_values, y_values, gp_polynomial)
         plt.plot(x_values,y_values)        
         (x1,y1) = s.plot() 
+        plt.show(false)
         diff = np.subtract(y1,y_values)
         for i in range(len(x_values)):
             self.assertAlmostEqual(y1[i],y_values[i])
