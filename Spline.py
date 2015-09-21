@@ -8,6 +8,7 @@ class Spline(object):
     def __init__(self, gridpoints, coeff):
         self.gp = gridpoints
         self.coeff = coeff
+        
 
     def __call__(self, u):
         #Find the hot interval
@@ -23,23 +24,21 @@ class Spline(object):
 
         xLen = len(x)
         yLen = len(y)
+        assert(len(gp) == xLen + 2)
         assert(xLen == yLen) #x and y need to be same size
         assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
         m = np.zeros((xLen, yLen)) #initialize matrix
         xi = []
-        for j in range(yLen):
-            xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
-        for i in range(xLen):
-
+        for i in range(xLen): #create Matrix for linear system to compute deBoor points
             N = cls.get_N(i, 3, gp)
             for j in range(yLen):
                 if (i == 0):
                     xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
                 m[j][i] = N(xi[j])
 
-        #Solve banded needs matrix ab to be in this form
+        #Solve banded needs matrix mbs to be in this form
         mbs = np.zeros((5, xLen)) #5 = 2 + 2 + 1 = u + l + 1
-        for i in range(5):
+        for i in range(5): 
             for j in range(xLen):
                 if (i - 2 + j < 0) or (i - 2 + j >= xLen):
                     mbs[i, j] = 0
