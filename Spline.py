@@ -44,10 +44,8 @@ class Spline(object):
                 if ((i - 3 + j) < 0) or ((i - 3 + j) >= 7):
                     mbs[i, j] = 0
                 else:
-                    mbs[i, j] = m[i - 3 + j, j]
-        print(xi)
+                    mbs[i, j] = m[i - 3 + j, j]    
         print(m)
-        print(mbs)
         #dx = solve_banded((3, 3), mbs, x) #m is banded with bandwidth 4
         #dy = solve_banded((3, 3), mbs, y)
         dx = solve(m, x)
