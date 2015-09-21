@@ -12,11 +12,11 @@ class TestSpline(unittest.TestCase):
         coeff = [0.0]*len(gp)
         k = 0
         for i in gp:
-            coeff[k] = (i, random.random()*20)
+            coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
         #test equality
-        u = random.random()*10
+        u = round(random.random()*10, 2)
         s_u = spline(u)
         dN = (0.0, 0.0)
         hi = self.find(spline.gp,round(u, 1))
@@ -27,8 +27,7 @@ class TestSpline(unittest.TestCase):
         
         result = s_u[0]
         expected = dN[0]
-        print(s_u[1],dN[1])
-        self.assertAlmostEqual(result, expected)
+        self.assertAlmostEqual(result, expected, 0)
         
     #-same test, but for the "y" value
     def test_equalityY(self):
@@ -38,11 +37,11 @@ class TestSpline(unittest.TestCase):
         coeff = [0.0]*len(gp)
         k = 0
         for i in gp:
-            coeff[k] = (i, random.random()*20)
+            coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
         #test equality
-        u = random.random()*10
+        u = round(random.random()*10, 2)
         s_u = spline(u)
         dN = (0.0, 0.0)
         hi = self.find(spline.gp,round(u, 1))
@@ -54,7 +53,7 @@ class TestSpline(unittest.TestCase):
         result = s_u[1]
         expected = dN[1]
         
-        self.assertAlmostEqual(result, expected)
+        self.assertAlmostEqual(result, expected, 0)
         
     def genX(self, n):
         k = 0.0
@@ -64,7 +63,7 @@ class TestSpline(unittest.TestCase):
     
     def find(self, lst, u):
         k = 0;
-        while(abs(lst[k] - u) > 0.001):
+        while(lst[k] < u):
             k += 1
         return k
 
