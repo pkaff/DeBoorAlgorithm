@@ -38,18 +38,16 @@ class Spline(object):
                 m[j][i] = N(xi[j])
 
         #Solve banded needs matrix ab to be in this form
-        mbs = np.zeros((7, xLen)) #7 = 3 + 3 + 1 = u + l + 1
-        for i in range(7):
+        mbs = np.zeros((5, xLen)) #5 = 2 + 2 + 1 = u + l + 1
+        for i in range(5):
             for j in range(xLen):
-                if ((i - 3 + j) < 0) or ((i - 3 + j) >= 7):
+                if (i - 2 + j < 0) or (i - 2 + j >= xLen):
                     mbs[i, j] = 0
                 else:
-                    mbs[i, j] = m[i - 3 + j, j]
+                    mbs[i, j] = m[i - 2 + j, j]
 
-        #dx = solve_banded((3, 3), mbs, x) #m is banded with bandwidth 4
-        #dy = solve_banded((3, 3), mbs, y)
-        dx = solve(m, x)
-        dy = solve(m, y)
+        dx = solve_banded((2, 2), mbs, x) #m is banded with bandwidth <4
+        dy = solve_banded((2, 2), mbs, y)
         
         return cls(gridpoints, list(zip(dx, dy)))
 
@@ -66,7 +64,6 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
-        print(k)
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
             if (i == 0):
