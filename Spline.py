@@ -45,10 +45,7 @@ class Spline(object):
                     mbs[i, j] = 0
                 else:
                     mbs[i, j] = m[i - 2 + j, j]
-<<<<<<< HEAD
-=======
 
->>>>>>> b6f46367fcbd47d240d17c947525cb6e497155da
         dx = solve_banded((2, 2), mbs, x) #m is banded with bandwidth <4
         dy = solve_banded((2, 2), mbs, y)
         
@@ -123,15 +120,4 @@ class Spline(object):
         plt.show()  
         return (list(evalugph[0]),list(evalugph[1]))
    
-    def test_polynom(self):
-        x_values = [x for x in self.f_range(-10,10,0.1)]
-        y_values = [x*x*x + 10*x*x+x+5 for x in self.f_range(-10,10,0.1)]
-        print(len(x_values))
-        temp = list(x*20-10 for x in random.random(197))
-        temp.sort()
-        gp_polynomial = [-10,-10, -10]+ temp + [10,10,10]
-        s = Spline.by_points(x_values, y_values, gp_polynomial)
-        plt.plot(x_values,y_values)        
-        (x1,y1) = s.plot() 
-        assert almost
         
