@@ -51,14 +51,16 @@ class TestSpline(unittest.TestCase):
     def test_polynom(self):
         x_values = [x for x in self.f_range(-10,10,0.1)]
         y_values = [x*x*x + 10*x*x+x+5 for x in self.f_range(-10,10,0.1)]
-        print(len(x_values))
         temp = list(x*20-10 for x in random.random(197))
         temp.sort()
         gp_polynomial = [-10,-10, -10]+ temp + [10,10,10]
         s = Spline.by_points(x_values, y_values, gp_polynomial)
         plt.plot(x_values,y_values)        
-        (x1,y1) = s.plot()
+        (x1,y1) = s.plot() 
+        plt.show(False)
         self.assertEqual(1, 1)
+        #for i in range(len(x_values)):
+            #self.assertAlmostEqual(y1[i],y_values[i])
         
     def genX(self, n):
         k = 0.0
