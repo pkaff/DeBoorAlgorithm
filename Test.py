@@ -11,7 +11,7 @@ class TestSpline(unittest.TestCase):
         gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
         coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
-        for i in range(10):
+        for i in range(len(coeff)):
             coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
@@ -37,7 +37,7 @@ class TestSpline(unittest.TestCase):
         gp = gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
         coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
-        for i in range(10):
+        for i in range(len(coeff)):
             coeff[k] = (i, round(random.random()*15, 2))
             k += 1
         spline = Spline(gp, coeff)
