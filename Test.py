@@ -8,7 +8,7 @@ class TestSpline(unittest.TestCase):
     def test_equalityX(self):
         #create the test spline
         grid = self.genX(20)
-        gp = list(grid)
+        gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
         coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
         for i in range(len(coeff)):
@@ -24,7 +24,8 @@ class TestSpline(unittest.TestCase):
             coeff = spline.coeff[i]
             N_u = Spline.get_N(i, 3, spline.gp)(u)
             dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
-        
+
+        #spline.plot()
         result = s_u[0]
         expected = dN[0]
         self.assertAlmostEqual(result, expected)
@@ -33,7 +34,7 @@ class TestSpline(unittest.TestCase):
     def test_equalityY(self):
         #create the test spline
         grid = self.genX(20)
-        gp = list(grid)
+        gp = gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
         coeff = [(0.0, 0.0)]*(len(gp) - 2)
         k = 0
         for i in range(len(coeff)):
@@ -50,10 +51,23 @@ class TestSpline(unittest.TestCase):
             N_u = Spline.get_N(i, 3, spline.gp)(u)
             dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
         
+        #spline.plot()
         result = s_u[1]
         expected = dN[1]
-        
         self.assertAlmostEqual(result, expected)
+        
+    def test_polynom(self):
+        x_values = [x for x in self.f_range(-10,10,0.1)]
+        y_values = [x*x*x + 10*x*x+x+5 for x in self.f_range(-10,10,0.1)]
+        print(len(x_values))
+        temp = list(x*20-10 for x in random.random(197))
+        temp.sort()
+        gp_polynomial = [-10,-10, -10]+ temp + [10,10,10]
+        s = Spline.by_points(x_values, y_values, gp_polynomial)
+        plt.plot(x_values,y_values)        
+        (x1,y1) = s.plot() 
+        for i in range(len(x_values)):
+            self.AssertAlmostEqual(y1[i],y_values[i])
         
     def genX(self, n):
         k = 0.0
@@ -66,6 +80,15 @@ class TestSpline(unittest.TestCase):
         while(lst[k] < u):
             k += 1
         return k
+        
+    def f_range(self,start, stop, step):
+        # implementing range() for float type numbers
+        i = start
+        while i <= stop:
+            yield i
+            i += step
 
     if __name__ == '__main__':
         unittest.main()
+        
+    

@@ -109,7 +109,7 @@ class Spline(object):
 
     def plot(self, h=0.1, dbp = 1): #h is step size, dbp check if you want de Boor points and Control Polygon
         gp = self.gp
-        # Generating a list of all evaluation point
+        # Generating a list of all evaluation points
         gph = list(self.f_range(gp[0],gp[-1],h))
         evalugph=list(zip(*[self(u) for u in gph]))
        
@@ -118,5 +118,6 @@ class Spline(object):
             plt.plot(list(zipcoeff[0]),list(zipcoeff[1]))
         plt.plot(list(evalugph[0]),list(evalugph[1]))
         plt.show()  
-       
+        return (list(evalugph[0]),list(evalugph[1]))
+   
         
