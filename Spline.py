@@ -18,6 +18,7 @@ class Spline(object):
     #@classmethod
     def by_points(cls, x, y, gridpoints):
         gp = gridpoints
+
         xLen = len(x)
         yLen = len(y)
         assert(xLen == yLen) #x and y need to be same size
@@ -66,6 +67,7 @@ class Spline(object):
     def alpha(self, i, u):
         gp = self.gp
         #Return alpha according to formula
+
         if (gp[i+2]-gp[i-1]) == 0:
             return 0
         else:
@@ -74,7 +76,7 @@ class Spline(object):
     def f_range(self,start, stop, step):
         # implementing range() for float type numbers
         i = start
-        while i < stop:
+        while i <= stop:
             yield i
             i += step
 
