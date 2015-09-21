@@ -1,4 +1,6 @@
 from scipy import *
+from scipy.linalg import *
+import numpy as np
 
 import matplotlib.pyplot as plt
 
@@ -15,7 +17,7 @@ class Spline(object):
         #Call recursive blossom algorithm
         return self.blossoms(i, u, 3)
 
-    #@classmethod
+    @classmethod
     def by_points(cls, x, y, gridpoints):
         gp = gridpoints
 
@@ -23,17 +25,20 @@ class Spline(object):
         yLen = len(y)
         assert(xLen == yLen) #x and y need to be same size
         assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
-        m = zeros(xLen, yLen) #initialize matrix
+        m = np.zeros((xLen, yLen)) #initialize matrix
         xi = []
         for i in range(xLen):
-            N = get_N(i, 3, gp)
+            if not xLen-1 == i:
+                N = cls.get_N(i, 3, gp)
             for j in range(yLen):
                 if (i == 0):
-                    xi.append((gp[i] + gp[i+1] + gp[i+2])/3) #store values for faster access
+                    xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
                 m[j][i] = N(xi[j])
-
-        dx = solve_banded((3, 0), m, x) #m is lower triangular with bandwidth 4 (main diagonal + 3 lower diagonals)
-        dy = solve_banded((3, 0), m, y)
+                print(m)
+        #dx = solve_banded((3, 3), m, x[::-1]) #m is lower triangular with bandwidth 4 (main diagonal + 3 lower diagonals)
+        #dy = solve_banded((3, 3), m, y[::-1])
+        dx = solve(m, x)
+        dy = solve(m, y)
         
         return cls(gridpoints, list(zip(dx, dy)))
 
@@ -53,16 +58,25 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
+        
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
-            return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0) 
+            return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0)
         else:
             #Recursion for N(i, k)(u) according to formula
-            d1 = not (gp[i+k-1] == gp[i-1])
-            d2 = not (gp[i+k] == gp[i])
-                
-            return (lambda u: d1 * (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u) + 
-                    d2 * (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+            d1 =  (gp[i+k-1] == gp[i-1])
+            d2 =  (gp[i+k] == gp[i])
+            if d1:
+                if d2:
+                    return (lambda u:0)
+                else:
+                    return (lambda u: (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+            else:    
+                if d2:
+                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u))
+                else:
+                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u) + 
+                            (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
 
     def alpha(self, i, u):
         gp = self.gp
