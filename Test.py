@@ -3,31 +3,70 @@ from scipy import *
 from Spline import *
 #tests
 class TestSpline(unittest.TestCase):
-    #creates a spline with points 0..9 and d values conforming to 5 - x for testing
-    def __init__(self):
-        gp = array(range(20))
-        coeff = [0.0]*10
-        for i in range(10):
-            coeff[i] = (i, 5 - i)
-        self.spline = Spline(gp, coeff)
         
-    #-assert that s(u) = sum(d(u(i)N(i,3))
-    def test_equality(self):
-        u = 5.0
-        s_u = array(self.spline(u))
-        dN = array((u, 0.0))
-        for i in range(2, len(self.spline.coeff) - 3):
-            coeff = self.spline.coeff[i][1]
-            N_u = self.spline.get_N(i,3)(u)
-            dN[1] += coeff*N_u
+    #-assert that s(u) = sum(d(u(i)N(i,3)) on the "x" value for a random spline
+    def test_equalityX(self):
+        #create the test spline
+        grid = self.genX(20)
+        gp = list(grid)
+        coeff = [0.0]*len(gp)
+        k = 0
+        for i in gp:
+            coeff[k] = (i, random.random()*20)
+            k += 1
+        spline = Spline(gp, coeff)
+        #test equality
+        u = random.random()*10
+        s_u = spline(u)
+        dN = (0.0, 0.0)
+        hi = self.find(spline.gp,round(u, 1))
+        for i in range(hi - 2, hi + 1):
+            coeff = spline.coeff[i]
+            N_u = Spline.get_N(i, 3, spline.gp)(u)
+            dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
         
-        print(dN)
-        print(s_u)
-        result = (0, 0)
-        expected = (0, 0)
+        result = s_u[0]
+        expected = dN[0]
+        print(s_u[1],dN[1])
         self.assertAlmostEqual(result, expected)
-            
-    #-assert that the extremities of the spline and the extremities of the graph overlap
+        
+    #-same test, but for the "y" value
+    def test_equalityY(self):
+        #create the test spline
+        grid = self.genX(20)
+        gp = list(grid)
+        coeff = [0.0]*len(gp)
+        k = 0
+        for i in gp:
+            coeff[k] = (i, random.random()*20)
+            k += 1
+        spline = Spline(gp, coeff)
+        #test equality
+        u = random.random()*10
+        s_u = spline(u)
+        dN = (0.0, 0.0)
+        hi = self.find(spline.gp,round(u, 1))
+        for i in range(hi - 2, hi + 1):
+            coeff = spline.coeff[i]
+            N_u = Spline.get_N(i, 3, spline.gp)(u)
+            dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
+        
+        result = s_u[1]
+        expected = dN[1]
+        
+        self.assertAlmostEqual(result, expected)
+        
+    def genX(self, n):
+        k = 0.0
+        while(k < n):
+            yield k
+            k += 0.1
+    
+    def find(self, lst, u):
+        k = 0;
+        while(abs(lst[k] - u) > 0.001):
+            k += 1
+        return k
 
     if __name__ == '__main__':
         unittest.main()
