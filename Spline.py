@@ -27,23 +27,33 @@ class Spline(object):
         assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
         m = np.zeros((xLen, yLen)) #initialize matrix
         xi = []
+        for j in range(yLen):
+            xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
         for i in range(xLen):
-            if not xLen-1 == i:
-                N = cls.get_N(i, 3, gp)
+
+            N = cls.get_N(i, 3, gp)
             for j in range(yLen):
                 if (i == 0):
                     xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
                 m[j][i] = N(xi[j])
-                print(m)
-        #dx = solve_banded((3, 3), m, x[::-1]) #m is lower triangular with bandwidth 4 (main diagonal + 3 lower diagonals)
-        #dy = solve_banded((3, 3), m, y[::-1])
+
+        #Solve banded needs matrix ab to be in this form
+        mbs = np.zeros((7, xLen)) #7 = 3 + 3 + 1 = u + l + 1
+        for i in range(7):
+            for j in range(xLen):
+                if ((i - 3 + j) < 0) or ((i - 3 + j) >= 7):
+                    mbs[i, j] = 0
+                else:
+                    mbs[i, j] = m[i - 3 + j, j]
+        print(xi)
+        print(m)
+        print(mbs)
+        #dx = solve_banded((3, 3), mbs, x) #m is banded with bandwidth 4
+        #dy = solve_banded((3, 3), mbs, y)
         dx = solve(m, x)
         dy = solve(m, y)
         
         return cls(gridpoints, list(zip(dx, dy)))
-
-    #@classmethod
-    #def get_spline_basis_function(cls, gridpoints)
 
     def blossoms(self, i, u, depth):
         if (depth == 0):
@@ -58,25 +68,33 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
-        
+        print(k)
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
-            return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0)
+            if (i == 0):
+                return (lambda u: 0)
+            return (lambda u: 1 if (gp[i-1] <= u <= gp[i]) else 0)
         else:
             #Recursion for N(i, k)(u) according to formula
-            d1 =  (gp[i+k-1] == gp[i-1])
-            d2 =  (gp[i+k] == gp[i])
+            iminus1 = i - 1
+            if (iminus1 < 0):
+                iminus1 = 0
+            iplusk = i + k
+            if (i + k >= len(gp)):
+                iplusk = len(gp) - 1
+            d1 = (gp[iplusk-1] == gp[iminus1])
+            d2 = (gp[iplusk] == gp[i])
             if d1:
                 if d2:
-                    return (lambda u:0)
+                    return (lambda u: 0)
                 else:
-                    return (lambda u: (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+                    return (lambda u: (gp[iplusk] - u)/(gp[iplusk] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
             else:    
                 if d2:
-                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u))
+                    return (lambda u: (u - gp[iminus1])/(gp[iplusk-1]-gp[iminus1]) * cls.get_N(i, k - 1, gp)(u))
                 else:
-                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u) + 
-                            (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+                    return (lambda u: (u - gp[iminus1])/(gp[iplusk-1]-gp[iminus1]) * cls.get_N(i, k - 1, gp)(u) + 
+                            (gp[iplusk] - u)/(gp[iplusk] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
 
     def alpha(self, i, u):
         gp = self.gp
