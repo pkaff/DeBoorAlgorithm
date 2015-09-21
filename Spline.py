@@ -115,7 +115,7 @@ class Spline(object):
        
         if dbp == 1:
             zipcoeff=list(zip(*self.coeff))
-            plt.plot(list(zipcoeff[0]),list(zipcoeff[1]))
+            plt.plot(list(zipcoeff[0]),list(zipcoeff[1]), marker='+')
         plt.plot(list(evalugph[0]),list(evalugph[1]))
         plt.show()  
         return (list(evalugph[0]),list(evalugph[1]))
