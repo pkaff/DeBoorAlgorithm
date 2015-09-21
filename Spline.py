@@ -44,13 +44,8 @@ class Spline(object):
                 if (i - 2 + j < 0) or (i - 2 + j >= xLen):
                     mbs[i, j] = 0
                 else:
-                    print(i, j)
                     mbs[i, j] = m[i - 2 + j, j]
 
-        np.set_printoptions(precision=3)
-        print(m)
-        print('\n')
-        print(mbs)
         dx = solve_banded((2, 2), mbs, x) #m is banded with bandwidth <4
         dy = solve_banded((2, 2), mbs, y)
         
@@ -69,7 +64,6 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
-        print(k)
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
             if (i == 0):
