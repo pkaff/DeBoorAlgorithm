@@ -27,7 +27,10 @@ class Spline(object):
         assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
         m = np.zeros((xLen, yLen)) #initialize matrix
         xi = []
+        for j in range(yLen):
+            xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
         for i in range(xLen):
+
             N = cls.get_N(i, 3, gp)
             for j in range(yLen):
                 if (i == 0):
@@ -66,7 +69,7 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
-        
+        print(k)
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
             if (i == 0):
