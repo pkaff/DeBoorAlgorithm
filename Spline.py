@@ -27,14 +27,16 @@ class Spline(object):
         assert (gp[0] == gp[1] and gp[1] == gp[2] and gp[-1] == gp[-2] and gp[-2] == gp[-3]) #multiplicity 3 on gridpoints
         m = np.zeros((xLen, yLen)) #initialize matrix
         xi = []
+        for j in range(yLen):
+            xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
         for i in range(xLen):
-            if not xLen-1 == i:
+            if not xLen == i:
+                print (i)
                 N = cls.get_N(i, 3, gp)
             for j in range(yLen):
                 if (i == 0):
-                    xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
-                m[j][i] = N(xi[j])
-                print(m)
+                    m[j][i] = N(xi[j])
+        print(m)
         #dx = solve_banded((3, 3), m, x[::-1]) #m is lower triangular with bandwidth 4 (main diagonal + 3 lower diagonals)
         #dy = solve_banded((3, 3), m, y[::-1])
         dx = solve(m, x)
@@ -58,25 +60,36 @@ class Spline(object):
     @classmethod
     def get_N(cls, i, k, gridpoints):
         gp = gridpoints
-        
+        print(k)
         if (k == 0):
             #N(i, 0)(u), lowest recursive depth
             return (lambda u: 1 if (gp[i-1] <= u < gp[i]) else 0)
         else:
             #Recursion for N(i, k)(u) according to formula
-            d1 =  (gp[i+k-1] == gp[i-1])
-            d2 =  (gp[i+k] == gp[i])
-            if d1:
-                if d2:
+            d1 =  (gp[i+k-1] == gp[i-1])            
+            if  ((i+k) < len(gp)):
+                d2 =  (gp[i+k] == gp[i])
+                print((d1,d2))
+                if d1:
+                    if d2:
+                        return (lambda u:0)
+                    else:
+                        return (lambda u: (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+                else:    
+                    if d2:
+                        return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u))
+                    else:
+                        return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u) + 
+                                    (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+            else:
+                print('a')
+                if d1:
+                    print('b')
                     return (lambda u:0)
+                 
                 else:
-                    return (lambda u: (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
-            else:    
-                if d2:
-                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u))
-                else:
-                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u) + 
-                            (gp[i+k] - u)/(gp[i+k] - gp[i]) * cls.get_N(i + 1, k - 1, gp)(u))
+                    return (lambda u: (u - gp[i-1])/(gp[i+k-1]-gp[i-1]) * cls.get_N(i, k - 1, gp)(u))                
+
 
     def alpha(self, i, u):
         gp = self.gp
