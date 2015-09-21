@@ -24,7 +24,6 @@ class TestSpline(unittest.TestCase):
             coeff = spline.coeff[i]
             N_u = Spline.get_N(i, 3, spline.gp)(u)
             dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
-        
         result = s_u[0]
         expected = dN[0]
         self.assertAlmostEqual(result, expected, 0)
@@ -52,7 +51,6 @@ class TestSpline(unittest.TestCase):
         
         result = s_u[1]
         expected = dN[1]
-        
         self.assertAlmostEqual(result, expected, 0)
         
     def genX(self, n):
