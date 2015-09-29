@@ -28,7 +28,7 @@ class Spline(object):
 		m = np.zeros((xLen, yLen)) #initialize matrix
 		xi = []
 		for i in range(xLen): #create Matrix for linear system to compute deBoor points
-			N = cls.get_N(i, 3, gp)
+			N = cls.get_N_i_3(i, gp)
 			for j in range(yLen):
 				if (i == 0):
 					xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
@@ -107,7 +107,7 @@ class Spline(object):
 		gp = self.gp
 		#Return alpha according to formula
 
-		if (gp[i+2]-gp[i-1]) == 0:
+		if (gp[i+2] == gp[i-1]):
 			return 0
 		else:
 			return (gp[i+2] - u)/(gp[i+2]-gp[i-1])
