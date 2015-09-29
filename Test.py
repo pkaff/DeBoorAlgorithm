@@ -3,70 +3,70 @@ from scipy import *
 from Spline import *
 #tests
 class TestSpline(unittest.TestCase):
-        
-    #-assert that s(u) = sum(d(u(i)N(i,3)) on the "x" value for a random spline
-    def test_equalityX(self):
-        #create the test spline
-        grid = self.genX(20)
-        gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
-        coeff = [(0.0, 0.0)]*(len(gp) - 2)
-        k = 0
-        for i in range(len(coeff)):
-            coeff[k] = (i, round(random.random()*15, 2))
-            k += 1
-        spline = Spline(gp, coeff)
-        #test equality
-        u = round(random.random()*10, 2)
-        s_u = spline(u)
-        dN = (0.0, 0.0)
-        #hi = self.find(spline.gp, round(u, 1))
-        for i in range(len(coeff)):
-            coeff = spline.coeff[i]
-            N_u = Spline.get_N(i, 3, spline.gp)(u)
-            dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
+	
+	#asserts that plotting works
+	def test_plot(self):
+		assert(True)
+	
+	#asserts that by_points yields same result as normal spline
+	def test_by_points(self):
+		assert(True)
+	
+	
+	#asserts that sum(N_i) == 1
+	#def test_N(self):
+	#	grid = self.genX(20)
+	#	gp = [0.0 , 0.0] + list(grid) + [20.0, 20.0, 20.0]
+	#	Ns = [Spline.get_N(i, 3, gp) for i in range(len(gp) - 2)]
+	#	for u in gp:
+	#		N_us = np.array([f(u) for f in Ns])
+	#		#print("u: ", u)
+	#		#print("N(u): ", N_us)
+	#		self.assertAlmostEqual(sum(N_us), 1)
+	
+	#asserts that sum(N_i) == 1 for N defined as a spline
+	def test_N_Spline(self):
+		grid = self.genX(20)
+		gp = [0.0 , 0.0] + list(grid) + [20.0, 20.0, 20.0]
+		Ns = [Spline.get_N_i_3(i, gp) for i in range(len(gp) - 2)]
+		for u in gp:
+			N_us = np.array([f(u) for f in Ns])
+			print("u: ", u)
+			print("N(u): ", N_us)
+			self.assertAlmostEqual(sum(N_us[:, 0]), 1)
+			self.assertAlmostEqual(sum(N_us[:, 1]), 1)
+	
+	#-assert that s(u) = sum(d(u(i)N(i,3)) on the "x" value for a random spline
+	def test_equality(self):
+		#create the test spline
+		grid = self.genX(20)
+		gp = [0.0 , 0.0] + list(grid) + [20.0, 20.0, 20.0]
+		coeff = [np.array([i, random.random()*15]) for i in range(len(gp) - 2)]
+		spline = Spline(gp, coeff)
+		#test equality
+		u = round(random.random()*3, 2)
+		s_u = spline(u)
+		dN = np.array([coeff[i] * Spline.get_N_i_3(i, gp)(u) for i in range(len(coeff))])
+		expected = [sum(dN[:, 0]), sum(dN[:, 1])]
+		result = s_u
+		self.assertAlmostEqual(result[0], expected[0])
+		self.assertAlmostEqual(result[1], expected[1])
+		
+	def genX(self, n):
+		k = 0.0
+		while(k < n):
+			yield k
+			k += 1
 
-        #spline.plot()
-        result = s_u[0]
-        expected = dN[0]
-        self.assertAlmostEqual(result, expected)
-        
-    #-same test, but for the "y" value
-    def test_equalityY(self):
-        #create the test spline
-        grid = self.genX(20)
-        gp = gp = [0.0 , 0.0] + list(grid) + [19.9, 19.9]
-        coeff = [(0.0, 0.0)]*(len(gp) - 2)
-        k = 0
-        for i in range(len(coeff)):
-            coeff[k] = (i, round(random.random()*15, 2))
-            k += 1
-        spline = Spline(gp, coeff)
-        #test equality
-        u = round(random.random()*10, 2)
-        s_u = spline(u)
-        dN = (0.0, 0.0)
-        #hi = self.find(spline.gp, round(u, 1))
-        for i in range(len(coeff)):
-            coeff = spline.coeff[i]
-            N_u = Spline.get_N(i, 3, spline.gp)(u)
-            dN = (dN[0] + coeff[0]*N_u, dN[1] + coeff[1]*N_u)
-        
-        #spline.plot()
-        result = s_u[1]
-        expected = dN[1]
-        self.assertAlmostEqual(result, expected)
-        
-    def genX(self, n):
-        k = 0.0
-        while(k < n):
-            yield k
-            k += 1
-    
-    def find(self, lst, u):
-        k = 0;
-        while(lst[k] < u):
-            k += 0.001
-        return k
+	def f_range(self,start, stop, step):
+		# implementing range() for float type numbers
+		i = start
+		while i <= stop:
+			yield i
+			i += step
+>>>>>>> cf4121ec033dc4fc2c27bc5ce406747a42e3eb32
 
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+		unittest.main()
+		
+	
