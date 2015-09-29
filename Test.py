@@ -1,6 +1,8 @@
 import unittest
 from scipy import *
 from Spline import *
+import matplotlib.pyplot as plt
+
 #tests
 class TestSpline(unittest.TestCase):
 	
@@ -10,7 +12,22 @@ class TestSpline(unittest.TestCase):
 	
 	#asserts that by_points yields same result as normal spline
 	def test_by_points(self):
-		assert(True)
+                grid = self.genX(20)
+		gp = [0.0 , 0.0] + list(grid) + [20.0, 20.0, 20.0]
+                x = np.array([random.random()*15 for i in range(len(gp) - 2)])
+                y = np.array([random.random()*15 for i in range(len(gp) - 2)])
+                print(x)
+                print(y)
+                s = Spline.by_points(x, y, gp)
+                s.plot(0.1, 0)
+                plt.plot(x, y)
+                values = [s(u) for u in self.f_range(0.0, 20.0, 0.1)]
+                for i in range(len(x)):
+                        err = abs(values - np.array([x[i], y[i]]))
+                        error = err[0] + err[1]
+                        point = error[argmin(error)]
+                        #self.assertAlmostEqual(point, 0.0, 2)
+                assert(True)
 	
 	
 	#asserts that sum(N_i) == 1
@@ -31,8 +48,6 @@ class TestSpline(unittest.TestCase):
 		Ns = [Spline.get_N_i_3(i, gp) for i in range(len(gp) - 2)]
 		for u in gp:
 			N_us = np.array([f(u) for f in Ns])
-			print("u: ", u)
-			print("N(u): ", N_us)
 			self.assertAlmostEqual(sum(N_us[:, 0]), 1)
 			self.assertAlmostEqual(sum(N_us[:, 1]), 1)
 	
@@ -58,7 +73,7 @@ class TestSpline(unittest.TestCase):
 			yield k
 			k += 1
 
-	def f_range(self,start, stop, step):
+	def f_range(self, start, stop, step):
 		# implementing range() for float type numbers
 		i = start
 		while i <= stop:

@@ -32,7 +32,7 @@ class Spline(object):
 			for j in range(yLen):
 				if (i == 0):
 					xi.append((gp[j] + gp[j+1] + gp[j+2])/3) #store values for faster access
-				m[j][i] = N(xi[j])
+				m[j][i] = N(xi[j])[0]
 
 		#Solve banded needs matrix mbs to be in this form
 		mbs = np.zeros((5, xLen)) #5 = 2 + 2 + 1 = u + l + 1
