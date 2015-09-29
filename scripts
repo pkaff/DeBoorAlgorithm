@@ -1,0 +1,8 @@
+python
+from Spline import *
+grid = [0.0 + i for i in range(20)]
+gp = [0.0 , 0.0] + grid + [20.0, 20.0, 20.0]
+coeff = [np.array([i, random.random()*15]) for i in range(len(gp) - 2)]
+spline = Spline(gp, coeff)
+spline.plot()
+quit()
