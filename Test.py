@@ -19,8 +19,8 @@ class TestSpline(unittest.TestCase):
                 print(x)
                 print(y)
                 s = Spline.by_points(x, y, gp)
-                s.plot(0.1, 0)
                 plt.plot(x, y)
+                s.plot(0.1, 1)
                 values = [s(u) for u in self.f_range(0.0, 20.0, 0.1)]
                 for i in range(len(x)):
                         err = abs(values - np.array([x[i], y[i]]))
@@ -29,17 +29,6 @@ class TestSpline(unittest.TestCase):
                         #self.assertAlmostEqual(point, 0.0, 2)
                 assert(True)
 	
-	
-	#asserts that sum(N_i) == 1
-	#def test_N(self):
-	#	grid = self.genX(20)
-	#	gp = [0.0 , 0.0] + list(grid) + [20.0, 20.0, 20.0]
-	#	Ns = [Spline.get_N(i, 3, gp) for i in range(len(gp) - 2)]
-	#	for u in gp:
-	#		N_us = np.array([f(u) for f in Ns])
-	#		#print("u: ", u)
-	#		#print("N(u): ", N_us)
-	#		self.assertAlmostEqual(sum(N_us), 1)
 	
 	#asserts that sum(N_i) == 1 for N defined as a spline
 	def test_N_Spline(self):
