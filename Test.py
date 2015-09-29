@@ -64,7 +64,6 @@ class TestSpline(unittest.TestCase):
 		while i <= stop:
 			yield i
 			i += step
->>>>>>> cf4121ec033dc4fc2c27bc5ce406747a42e3eb32
 
 if __name__ == '__main__':
 		unittest.main()

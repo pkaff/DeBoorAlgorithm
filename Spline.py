@@ -132,7 +132,10 @@ class Spline(object):
 			plt.plot(list(zipcoeff[:,0]),list(zipcoeff[:,1]), marker='+')
 			#plt.plot(list(zipcoeff[0]),list(zipcoeff[1]), marker='+')
 		#plt.plot(list(evalugph[0]),list(evalugph[1]))
-		plt.plot(evalugph[:, 0],evalugph[:, 1])
+                evalX = [x[0] for x in evalugph]
+                evalY = [x[1] for x in evalugph]
+                plt.plot(evalX, evalY)
+		#plt.plot(evalugph[:, 0],evalugph[:, 1])
 		plt.show()  
 		#return (list(evalugph[0]),list(evalugph[1]))
-		return (evalugph[:, 0],evalugph[:, 1])
+		return (evalX, evalY)
